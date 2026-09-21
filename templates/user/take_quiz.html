@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Taking Quiz - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Progress Bar -->
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" style="width: {{ progress }}%;"></div>
+            </div>
+            
+            <!-- Question Info -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="question-number">
+                    Question {{ current_index }} of {{ total_questions }}
+                </span>
+                <span class="badge bg-primary">{{ progress|floatformat:0 }}% Complete</span>
+            </div>
+            
+            <!-- Question Card -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" id="quizForm">
+                        {% csrf_token %}
+                        
+                        <div class="question-text mb-4">
+                            {{ question.text }}
+                        </div>
+                        
+                        <div class="options-container">
+                            <div class="option-item">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" 
+                                           id="optionA" value="A" {% if selected == 'A' %}checked{% endif %} required>
+                                    <label class="form-check-label" for="optionA">
+                                        <strong>A.</strong> {{ question.option_a }}
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" 
+                                           id="optionB" value="B" {% if selected == 'B' %}checked{% endif %}>
+                                    <label class="form-check-label" for="optionB">
+                                        <strong>B.</strong> {{ question.option_b }}
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" 
+                                           id="optionC" value="C" {% if selected == 'C' %}checked{% endif %}>
+                                    <label class="form-check-label" for="optionC">
+                                        <strong>C.</strong> {{ question.option_c }}
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="option-item">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer" 
+                                           id="optionD" value="D" {% if selected == 'D' %}checked{% endif %}>
+                                    <label class="form-check-label" for="optionD">
+                                        <strong>D.</strong> {{ question.option_d }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if current_index == total_questions %}
+                                    <i class="fas fa-check-circle me-2"></i>Submit Quiz
+                                {% else %}
+                                    <i class="fas fa-arrow-right me-2"></i>Next Question
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Prevent going back to previous questions
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+    
+    // Auto-save selected answer (optional feature)
+    document.querySelectorAll('input[name="answer"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // You can implement auto-save functionality here
+            console.log('Answer selected: ' + this.value);
+        });
+    });
+</script>
+{% endblock %}

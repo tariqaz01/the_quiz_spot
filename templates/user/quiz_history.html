@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz History - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-history me-2"></i>Your Quiz History
+            </h2>
+        </div>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ total_quizzes }}</div>
+                        <div class="stat-label">Total Quizzes</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(45deg, #1cc88a, #17a673);">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ avg_score }}%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="stat-card" style="background: linear-gradient(45deg, #36b9cc, #2c9faf);">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ pass_percentage }}%</div>
+                        <div class="stat-label">Pass Rate</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-trophy fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz History Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">All Quiz Attempts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subject</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in quizzes %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ quiz.subject.name }}</td>
+                                    <td>{{ quiz.score }}/{{ quiz.total_questions }}</td>
+                                    <td>{{ quiz.percentage|floatformat:1 }}%</td>
+                                    <td>
+                                        {% if quiz.status == 'Pass' %}
+                                            <span class="badge-pass">Pass</span>
+                                        {% else %}
+                                            <span class="badge-fail">Fail</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ quiz.date_taken|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'quiz_result' quiz.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <div class="py-4">
+                                            <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                                            <p class="lead">No quiz history found</p>
+                                            <a href="{% url 'select_subject' %}" class="btn btn-primary">
+                                                Take Your First Quiz
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

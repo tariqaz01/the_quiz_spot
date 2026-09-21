@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-tachometer-alt me-2"></i>Welcome, {{ user.username }}!
+            </h2>
+        </div>
+    </div>
+    
+    <!-- User Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="stat-card">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ user_profile.total_quizzes_taken }}</div>
+                        <div class="stat-label">Quizzes Taken</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="stat-card" style="background: linear-gradient(45deg, #1cc88a, #17a673);">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ user_profile.average_score|floatformat:1 }}%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chart-line fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="stat-card" style="background: linear-gradient(45deg, #36b9cc, #2c9faf);">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="stat-value">{{ total_subjects }}</div>
+                        <div class="stat-label">Available Subjects</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-book fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Ready to Test Your Knowledge?</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'select_subject' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle me-2"></i>Take a Quiz Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Quizzes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Your Recent Quizzes</h5>
+                    <a href="{% url 'quiz_history' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in recent_quizzes %}
+                                <tr>
+                                    <td>{{ quiz.subject.name }}</td>
+                                    <td>{{ quiz.score }}/{{ quiz.total_questions }}</td>
+                                    <td>{{ quiz.percentage|floatformat:1 }}%</td>
+                                    <td>
+                                        {% if quiz.status == 'Pass' %}
+                                            <span class="badge-pass">Pass</span>
+                                        {% else %}
+                                            <span class="badge-fail">Fail</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ quiz.date_taken|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'quiz_result' quiz.id %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">You haven't taken any quizzes yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

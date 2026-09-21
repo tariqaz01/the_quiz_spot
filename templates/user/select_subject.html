@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Select Subject - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-book-open me-2"></i>Select a Subject
+            </h2>
+            <p class="lead">Choose a subject to start your quiz</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        {% for subject in subjects %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">{{ subject.name }}</h5>
+                    <p class="card-text text-muted">{{ subject.description|truncatechars:100 }}</p>
+                    <p class="text-muted small">
+                        <i class="fas fa-question-circle me-1"></i>
+                        {{ subject.questions.count }} questions available
+                    </p>
+                    <a href="{% url 'start_quiz' subject.id %}" class="btn btn-primary">
+                        <i class="fas fa-play-circle me-2"></i>Start Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No subjects available at the moment. Please check back later.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

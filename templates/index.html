@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <section class="hero-section bg-primary text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Welcome to The Quiz Spot</h1>
+            <p class="lead mb-4">Your ultimate platform for NTS test preparation</p>
+            {% if not user.is_authenticated %}
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg">Get Started</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose The Quiz Spot?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <i class="fas fa-tachometer-alt fa-3x text-primary mb-3"></i>
+                        <h4>Admin Panel</h4>
+                        <p class="text-muted">Easily manage subjects, questions, and track user performance with our intuitive admin interface.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h4>User Panel</h4>
+                        <p class="text-muted">Take quizzes, track your progress, and improve your knowledge with instant feedback.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center p-4">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h4>Performance Tracking</h4>
+                        <p class="text-muted">Monitor your progress with detailed analytics and performance reports.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h3 mb-0">1</span>
+                        </div>
+                        <h5>Register/Login</h5>
+                        <p class="text-muted">Create an account or login to your existing account</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h3 mb-0">2</span>
+                        </div>
+                        <h5>Select Subject</h5>
+                        <p class="text-muted">Choose a subject you want to test your knowledge in</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h3 mb-0">3</span>
+                        </div>
+                        <h5>Take Quiz</h5>
+                        <p class="text-muted">Answer multiple-choice questions within the time limit</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h3 mb-0">4</span>
+                        </div>
+                        <h5>Get Results</h5>
+                        <p class="text-muted">Receive instant feedback and track your performance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

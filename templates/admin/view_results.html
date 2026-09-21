@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}View Results - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-chart-bar me-2"></i>Quiz Results
+            </h2>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <select class="form-select" id="subjectFilter" onchange="filterBySubject(this.value)">
+                <option value="">All Subjects</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.id }}" {% if request.GET.subject == subject.id|stringformat:"s" %}selected{% endif %}>
+                    {{ subject.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" id="dateFilter" onchange="filterByDate(this.value)">
+                <option value="">All Time</option>
+                <option value="today" {% if request.GET.date == 'today' %}selected{% endif %}>Today</option>
+                <option value="week" {% if request.GET.date == 'week' %}selected{% endif %}>Last 7 Days</option>
+                <option value="month" {% if request.GET.date == 'month' %}selected{% endif %}>Last 30 Days</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Results Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">All Quiz Attempts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>User</th>
+                                    <th>Subject</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in quizzes %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ quiz.user.username }}</td>
+                                    <td>{{ quiz.subject.name }}</td>
+                                    <td>{{ quiz.score }}/{{ quiz.total_questions }}</td>
+                                    <td>{{ quiz.percentage|floatformat:1 }}%</td>
+                                    <td>
+                                        {% if quiz.status == 'Pass' %}
+                                            <span class="badge-pass">Pass</span>
+                                        {% else %}
+                                            <span class="badge-fail">Fail</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ quiz.date_taken|date:"M d, Y H:i" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No quiz attempts found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterBySubject(subjectId) {
+        var url = new URL(window.location.href);
+        if (subjectId) {
+            url.searchParams.set('subject', subjectId);
+        } else {
+            url.searchParams.delete('subject');
+        }
+        window.location.href = url.toString();
+    }
+    
+    function filterByDate(dateFilter) {
+        var url = new URL(window.location.href);
+        if (dateFilter) {
+            url.searchParams.set('date', dateFilter);
+        } else {
+            url.searchParams.delete('date');
+        }
+        window.location.href = url.toString();
+    }
+</script>
+{% endblock %}

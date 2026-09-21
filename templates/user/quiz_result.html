@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Result - The Quiz Spot{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card result-card">
+                <div class="card-body">
+                    <!-- Result Status -->
+                    <div class="result-status {{ quiz.status|lower }}">
+                        {{ quiz.status }}
+                    </div>
+                    
+                    <!-- Score Circle -->
+                    <div class="score-circle">
+                        <canvas id="scoreChart" width="150" height="150"></canvas>
+                        <div class="score-text">{{ quiz.percentage|floatformat:0 }}%</div>
+                    </div>
+                    
+                    <!-- Score Details -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="stat-card mb-3" style="background: linear-gradient(45deg, #4e73df, #224abe);">
+                                <div class="stat-value">{{ quiz.score }}</div>
+                                <div class="stat-label">Correct Answers</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card mb-3" style="background: linear-gradient(45deg, #e74a3b, #d43f31);">
+                                <div class="stat-value">{{ incorrect_count }}</div>
+                                <div class="stat-label">Incorrect Answers</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card mb-3" style="background: linear-gradient(45deg, #36b9cc, #2c9faf);">
+                                <div class="stat-value">{{ quiz.total_questions }}</div>
+                                <div class="stat-label">Total Questions</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subject Info -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-book me-2"></i>
+                        Subject: <strong>{{ quiz.subject.name }}</strong> | 
+                        Date: <strong>{{ quiz.date_taken|date:"F d, Y H:i" }}</strong>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-3 mt-4">
+                        <a href="{% url 'select_subject' %}" class="btn btn-primary">
+                            <i class="fas fa-redo me-2"></i>Take Another Quiz
+                        </a>
+                        <a href="{% url 'quiz_history' %}" class="btn btn-info">
+                            <i class="fas fa-history me-2"></i>View History
+                        </a>
+                    </div>
+                    
+                    <!-- Detailed Answers -->
+                    <div class="mt-5">
+                        <h4 class="mb-3">Detailed Answers</h4>
+                        <div class="accordion" id="answersAccordion">
+                            {% for response in responses %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                                            type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse{{ forloop.counter }}">
+                                        <span class="me-2">
+                                            {% if response.is_correct %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                            {% else %}
+                                                <i class="fas fa-times-circle text-danger"></i>
+                                            {% endif %}
+                                        </span>
+                                        Question {{ forloop.counter }}: {{ response.question.text|truncatechars:100 }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ forloop.counter }}" 
+                                     class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                                     data-bs-parent="#answersAccordion">
+                                    <div class="accordion-body">
+                                        <div class="mb-2">
+                                            <strong>Your Answer:</strong> 
+                                            {% if response.selected_answer %}
+                                                {{ response.selected_answer }}. 
+                                                {% if response.selected_answer == 'A' %}{{ response.question.option_a }}{% endif %}
+                                                {% if response.selected_answer == 'B' %}{{ response.question.option_b }}{% endif %}
+                                                {% if response.selected_answer == 'C' %}{{ response.question.option_c }}{% endif %}
+                                                {% if response.selected_answer == 'D' %}{{ response.question.option_d }}{% endif %}
+                                            {% else %}
+                                                <span class="text-warning">Not answered</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-2">
+                                            <strong>Correct Answer:</strong> 
+                                            {{ response.question.correct_answer }}. 
+                                            {% if response.question.correct_answer == 'A' %}{{ response.question.option_a }}{% endif %}
+                                            {% if response.question.correct_answer == 'B' %}{{ response.question.option_b }}{% endif %}
+                                            {% if response.question.correct_answer == 'C' %}{{ response.question.option_c }}{% endif %}
+                                            {% if response.question.correct_answer == 'D' %}{{ response.question.option_d }}{% endif %}
+                                        </div>
+                                        {% if response.question.explanation %}
+                                        <div class="alert alert-secondary mt-2">
+                                            <strong>Explanation:</strong> {{ response.question.explanation }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create score chart
+        var ctx = document.getElementById('scoreChart').getContext('2d');
+        var scoreChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [{{ quiz.score }}, {{ incorrect_count }}],
+                    backgroundColor: ['#1cc88a', '#e74a3b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                responsive: false,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
